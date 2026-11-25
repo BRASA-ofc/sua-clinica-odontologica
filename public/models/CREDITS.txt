@@ -1,0 +1,5 @@
+arcada.glb — manequim de arcadas dentárias (superior e inferior)
+Dentes baseados em "Dental arches" (https://sketchfab.com/3d-models/dental-arches-a17fda74c85344709624e9e39a6634b6)
+de Lydran96 (https://sketchfab.com/Lydran96), licenciado sob CC BY 4.0 (http://creativecommons.org/licenses/by/4.0/).
+Alterações: dentes reposicionados numa curva de arcada em U, raízes recortadas, incisivos centrais superiores
+levemente ampliados, malha simplificada; gengiva, palato e base gerados para este projeto.

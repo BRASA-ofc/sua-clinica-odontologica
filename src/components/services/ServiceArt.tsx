@@ -67,7 +67,7 @@ export function ServiceArt({ kind }: { kind: Kind }) {
 
   return (
     <svg viewBox="0 0 280 220" className="h-full w-full">
-      <rect width="280" height="220" fill="#e7f2f8" />
+      <rect width="280" height="220" fill="#dff4ff" />
       <path
         d="M140 18c34 0 54 20 60 48 6 30 2 58-12 82-8 16-20 28-36 32-6 2-12 2-18 0-18-6-32-20-42-40-12-28-14-62-6-92 8-28 28-30 54-30z"
         fill="#f7f4ee"
@@ -78,9 +78,9 @@ export function ServiceArt({ kind }: { kind: Kind }) {
         fill="#f3e2c4"
       />
       <path d="M132 108c6 10 8 22 6 34 6-8 14-14 24-16-2 14-8 24-16 28-8-6-14-18-14-46z" fill="#f6c9cf" />
-      <circle cx="168" cy="62" r="11" fill="none" stroke="#1b6d88" strokeWidth="2" />
-      <path d="M176 70l14 14" stroke="#1b6d88" strokeWidth="2" strokeLinecap="round" />
-      <text x="24" y="200" fill="#1b6d88" fontSize="11" fontFamily="Outfit, sans-serif">
+      <circle cx="168" cy="62" r="11" fill="none" stroke="#0f78b8" strokeWidth="2" />
+      <path d="M176 70l14 14" stroke="#0f78b8" strokeWidth="2" strokeLinecap="round" />
+      <text x="24" y="200" fill="#0f78b8" fontSize="11" fontFamily="Nunito, sans-serif">
         área a avaliar · ilustração didática
       </text>
     </svg>

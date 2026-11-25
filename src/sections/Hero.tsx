@@ -1,125 +1,155 @@
-import { motion, useMotionValue } from 'framer-motion'
-import { ArrowUpRight } from 'lucide-react'
+import { motion, useMotionValue, useMotionValueEvent, useScroll, useSpring, useTransform } from 'framer-motion'
+import { ArrowRight, ShieldCheck, Sparkles } from 'lucide-react'
 import { useRef } from 'react'
 import { hero } from '../data/clinic'
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
-import { ToothStage } from '../components/tooth/ToothStage'
-import type { Pointer2D } from '../three/ToothCanvas'
+import { ArchStage } from '../components/tooth/ArchStage'
+import { Magnetic } from '../components/aero/Magnetic'
+import { CountUp } from '../components/aero/CountUp'
+import type { ArchControl } from '../three/ArchCanvas'
 
 const ease = [0.22, 1, 0.36, 1] as const
+const spring = { type: 'spring', stiffness: 160, damping: 16 } as const
 
 export function Hero() {
-  const reduced = usePrefersReducedMotion()
-  const pointer = useRef<Pointer2D>({ x: 0, y: 0 })
-  const textX = useMotionValue(0)
-  const textY = useMotionValue(0)
+  const paused = usePrefersReducedMotion()
+  const section = useRef<HTMLElement>(null)
+  const control = useRef<ArchControl>({ pointer: { x: 0, y: 0 }, drag: 0, fling: 0, bite: 0, scroll: 0, flash: 0 })
+  const tx = useMotionValue(0)
+  const ty = useMotionValue(0)
+  const textX = useSpring(tx, { stiffness: 80, damping: 18 })
+  const textY = useSpring(ty, { stiffness: 80, damping: 18 })
+
+  const { scrollYProgress } = useScroll({ target: section, offset: ['start start', 'end start'] })
+  useMotionValueEvent(scrollYProgress, 'change', (value) => {
+    control.current.scroll = value
+  })
+  const stageY = useTransform(scrollYProgress, [0, 1], [0, 160])
+  const textFade = useTransform(scrollYProgress, [0, 0.7], [1, 0])
+  const textLift = useTransform(scrollYProgress, [0, 1], [0, -80])
 
   return (
     <section
+      ref={section}
       id="inicio"
       className="relative overflow-hidden"
       onPointerMove={(event) => {
-        const bounds = event.currentTarget.getBoundingClientRect()
-        const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2
-        const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2
-        pointer.current.x = x
-        pointer.current.y = y
-        if (!reduced) {
-          textX.set(x * -10)
-          textY.set(y * -6)
-        }
+        if (paused || event.pointerType === 'touch') return
+        const box = event.currentTarget.getBoundingClientRect()
+        tx.set(((event.clientX - box.left) / box.width - 0.5) * -14)
+        ty.set(((event.clientY - box.top) / box.height - 0.5) * -10)
       }}
       onPointerLeave={() => {
-        pointer.current.x = 0
-        pointer.current.y = 0
-        textX.set(0)
-        textY.set(0)
+        tx.set(0)
+        ty.set(0)
       }}
     >
-      <div
-        className="pointer-events-none absolute inset-y-0 right-0 hidden w-[58%] lg:block"
-        style={{
-          background:
-            'linear-gradient(90deg, rgba(5,7,10,0) 0%, rgba(5,7,10,0.45) 26%, #070b10 48%, #05070b 100%)',
-        }}
-      />
-      <div className="pointer-events-none absolute bottom-0 left-0 h-64 w-64 rounded-full bg-white/70 blur-3xl" />
+      <div className="relative mx-auto grid min-h-[100svh] max-w-7xl grid-cols-1 items-center gap-4 px-5 pt-28 pb-12 md:px-8 lg:grid-cols-12 lg:pt-24">
+        <motion.div className="relative z-10 lg:col-span-6" style={{ x: textX, y: textY }}>
+          <motion.div style={{ opacity: textFade, y: textLift }}>
+            <motion.span className="kicker" initial={{ opacity: 0, y: 14, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={spring}>
+              <Sparkles size={14} aria-hidden="true" />
+              {hero.kicker}
+            </motion.span>
 
-      <div className="relative z-10 flex min-h-[100svh] flex-col">
-        <motion.div
-          className="order-1 px-5 pt-24 md:px-8 lg:w-[44%] lg:px-12 lg:pt-28 xl:px-16"
-          style={{ x: textX, y: textY }}
-        >
-          <motion.p
-            className="text-[11px] tracking-[0.32em] text-lagoon uppercase"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease }}
-          >
-            {hero.kicker}
-          </motion.p>
-          <h1 className="mt-4 font-display text-[clamp(2.7rem,4.8vw,5.1rem)] leading-[0.9] font-semibold tracking-[-0.045em] text-navy">
-            {hero.title.map((line, index) => (
-              <span key={line} className="block overflow-hidden">
-                <motion.span
-                  className={`block ${index === 2 ? 'text-lagoon' : ''}`}
-                  initial={{ y: '110%' }}
-                  animate={{ y: '0%' }}
-                  transition={{ duration: 0.9, delay: 0.12 + index * 0.12, ease }}
+            <h1 className="mt-6 font-display text-[clamp(2.7rem,5.6vw,5.3rem)] leading-[1] font-black tracking-[-0.03em] text-navy">
+              {hero.title.map((line, index) => (
+                <span key={line} className="block overflow-hidden pb-[0.1em]">
+                  <motion.span
+                    className={`block ${index === 2 ? 'text-gloss-green' : index === 1 ? 'text-gloss' : ''}`}
+                    initial={{ y: '110%', rotate: 3 }}
+                    animate={{ y: '0%', rotate: 0 }}
+                    transition={{ duration: 0.9, delay: 0.1 + index * 0.12, ease }}
+                  >
+                    {line}
+                  </motion.span>
+                </span>
+              ))}
+            </h1>
+
+            <motion.p
+              className="mt-6 max-w-lg text-lg leading-relaxed font-semibold text-navy/80 md:text-xl"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.5, ease }}
+            >
+              {hero.subtitle}
+            </motion.p>
+
+            <motion.div
+              className="mt-8 flex flex-col gap-3 sm:flex-row"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.65, ease }}
+            >
+              <Magnetic>
+                <a href="#tratamentos" className="btn btn-solid group w-full whitespace-nowrap sm:w-auto">
+                  {hero.primary}
+                  <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+                </a>
+              </Magnetic>
+              <Magnetic>
+                <a href="#contato" className="btn btn-ghost w-full whitespace-nowrap sm:w-auto">
+                  {hero.secondary}
+                </a>
+              </Magnetic>
+            </motion.div>
+
+            <dl className="mt-10 grid grid-cols-3 gap-3 sm:max-w-lg">
+              {hero.signals.map((signal, index) => (
+                <motion.div
+                  key={signal.label}
+                  className={`glass rounded-2xl px-3 py-3 text-center sm:px-4 ${['float-a', 'float-b', 'float-c'][index]}`}
+                  initial={{ opacity: 0, scale: 0.6, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ ...spring, delay: 0.85 + index * 0.12 }}
+                  whileHover={{ scale: 1.08, y: -4 }}
                 >
-                  {line}
-                </motion.span>
-              </span>
-            ))}
-          </h1>
+                  <dt className="font-display text-3xl font-black text-gloss">
+                    <CountUp value={Number(signal.value)} pad={2} />
+                  </dt>
+                  <dd className="mt-0.5 text-xs leading-tight font-bold text-navy sm:text-sm">{signal.label}</dd>
+                  <dd className="mt-0.5 text-[10px] font-bold tracking-[0.1em] text-lagoon/80 uppercase">{signal.note}</dd>
+                </motion.div>
+              ))}
+            </dl>
+          </motion.div>
         </motion.div>
-
-        <div className="relative order-2 h-[68vh] min-h-[440px] bg-[linear-gradient(180deg,rgba(5,7,10,0)_0%,#0a1016_22%,#05070b_100%)] lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[52%] lg:bg-none">
-          <ToothStage pointer={pointer} />
-        </div>
 
         <motion.div
-          className="relative z-10 order-3 max-w-xl px-5 pt-2 md:px-8 lg:w-[44%] lg:px-12 lg:pt-5 xl:px-16"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.55, ease }}
+          className="relative h-[58vh] min-h-[380px] lg:col-span-6 lg:h-[84vh]"
+          style={{ y: stageY }}
+          initial={{ opacity: 0, scale: 0.75 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 70, damping: 14, delay: 0.2 }}
         >
-          <p className="text-lg leading-relaxed text-navy/75 md:text-xl">{hero.subtitle}</p>
-          <div className="mt-8 flex flex-col gap-3 pr-16 sm:flex-row sm:pr-0">
-            <a href="#tratamentos" className="btn btn-solid group">
-              {hero.primary}
-              <ArrowUpRight
-                size={18}
-                className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              />
-            </a>
-            <a href="#contato" className="btn btn-ghost group">
-              {hero.secondary}
-              <ArrowUpRight
-                size={18}
-                className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              />
-            </a>
-          </div>
+          <ArchStage control={control} />
+          <motion.div
+            className="glass float-b pointer-events-none absolute top-[12%] right-2 hidden items-center gap-2 rounded-full py-1.5 pr-4 pl-1.5 text-sm font-bold text-navy sm:flex"
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ ...spring, delay: 1.3 }}
+          >
+            <span className="orb orb-green grid h-8 w-8 place-items-center text-white">
+              <ShieldCheck size={15} aria-hidden="true" />
+            </span>
+            Planejamento em 3D
+          </motion.div>
         </motion.div>
-
-        <motion.dl
-          className="relative z-10 order-4 mt-auto grid gap-6 border-t border-mist px-5 pt-6 pb-8 sm:grid-cols-3 md:px-8 lg:w-[44%] lg:px-12 xl:px-16"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 0.85 }}
-        >
-          {hero.signals.map((signal) => (
-            <div key={signal.label}>
-              <dt className="font-display text-3xl font-semibold tracking-tight text-navy">
-                {signal.value}
-              </dt>
-              <dd className="mt-1 text-sm text-navy/80">{signal.label}</dd>
-              <dd className="text-[11px] tracking-[0.16em] text-lagoon uppercase">{signal.note}</dd>
-            </div>
-          ))}
-        </motion.dl>
       </div>
+
+      <motion.a
+        href="#proposta"
+        aria-label="Rolar para a próxima seção"
+        className="absolute bottom-5 left-1/2 hidden h-12 w-7 -translate-x-1/2 justify-center rounded-full border-2 border-white/90 bg-white/30 pt-2 backdrop-blur-sm lg:flex"
+        style={{ opacity: textFade }}
+      >
+        <motion.span
+          className="h-2 w-2 rounded-full bg-sky"
+          animate={paused ? undefined : { y: [0, 16, 0], opacity: [1, 0.2, 1] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      </motion.a>
     </section>
   )
 }

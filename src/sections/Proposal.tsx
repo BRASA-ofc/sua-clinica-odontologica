@@ -1,57 +1,44 @@
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
+import { Ear, Eye, HeartHandshake } from 'lucide-react'
 import { proposal } from '../data/clinic'
-import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
 import { Reveal } from '../components/ui/Reveal'
+import { SectionTitle } from '../components/aero/SectionTitle'
+import { Tilt } from '../components/aero/Tilt'
+
+const icons = [Ear, Eye, HeartHandshake]
+const floats = ['float-a', 'float-b', 'float-c']
 
 export function Proposal() {
-  const reduced = usePrefersReducedMotion()
-  const ref = useRef<HTMLElement>(null)
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'end start'],
-  })
-  const y = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [60, -60])
-
   return (
-    <section id="proposta" ref={ref} className="relative scroll-mt-28 overflow-hidden bg-white/45">
-      <motion.p
-        style={{ y }}
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-6 right-[-4vw] font-display text-[22vw] leading-none font-semibold tracking-tight text-foam"
-      >
-        escuta
-      </motion.p>
-      <div className="relative mx-auto grid max-w-6xl gap-16 px-5 py-28 md:px-8 lg:grid-cols-12">
-        <Reveal className="lg:col-span-5">
-          <p className="text-[11px] tracking-[0.32em] text-lagoon uppercase">{proposal.kicker}</p>
-          <h2 className="mt-4 font-display text-[clamp(2.4rem,4.5vw,4.4rem)] leading-[0.95] font-semibold tracking-[-0.04em] text-navy">
-            {proposal.title}
-          </h2>
-          <span className="mt-8 block h-px w-24 bg-lagoon" />
-        </Reveal>
-        <div className="lg:col-span-6 lg:col-start-7">
-          <Reveal delay={0.1}>
-            <p className="text-lg leading-relaxed text-navy/75">{proposal.lead}</p>
+    <section id="proposta" className="relative scroll-mt-24">
+      <div className="mx-auto max-w-6xl px-5 py-24 md:px-8">
+        <div className="grid grid-cols-1 items-end gap-8 lg:grid-cols-12">
+          <Reveal className="lg:col-span-7">
+            <SectionTitle kicker={proposal.kicker} title="Cuidado odontológico que" highlight="começa ouvindo você." />
           </Reveal>
-          <ol className="mt-12">
-            {proposal.points.map((point, index) => (
-              <Reveal key={point.index} delay={0.08 * index}>
-                <li className="grid grid-cols-[auto_1fr] gap-6 border-t border-mist py-7">
-                  <span className="font-display text-sm tracking-[0.18em] text-silver">
-                    {point.index}
-                  </span>
-                  <div>
-                    <h3 className="font-display text-2xl font-semibold tracking-tight text-navy">
-                      {point.title}
-                    </h3>
-                    <p className="mt-2 max-w-md text-navy/70">{point.text}</p>
-                  </div>
+          <Reveal delay={0.1} className="lg:col-span-5">
+            <p className="glass rounded-3xl p-6 text-lg leading-relaxed font-semibold text-navy/80">{proposal.lead}</p>
+          </Reveal>
+        </div>
+
+        <ol className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
+          {proposal.points.map((point, index) => {
+            const Icon = icons[index] ?? Ear
+            return (
+              <Reveal key={point.index} delay={0.1 * index}>
+                <li className="list-none">
+                  <Tilt className="glass h-full rounded-[2rem] p-7">
+                    <div className={`orb ${index === 1 ? 'orb-green' : ''} ${floats[index]} grid h-16 w-16 place-items-center text-white`}>
+                      <Icon size={28} aria-hidden="true" />
+                    </div>
+                    <p className="mt-6 font-display text-sm font-black tracking-[0.2em] text-lagoon/70">{point.index}</p>
+                    <h3 className="mt-1 font-display text-3xl font-black text-navy">{point.title}</h3>
+                    <p className="mt-3 leading-relaxed text-navy/75">{point.text}</p>
+                  </Tilt>
                 </li>
               </Reveal>
-            ))}
-          </ol>
-        </div>
+            )
+          })}
+        </ol>
       </div>
     </section>
   )

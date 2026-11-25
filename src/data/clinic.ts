@@ -249,6 +249,7 @@ export const sections = [
   { id: "dentista", label: "Profissional" },
   { id: "clinica", label: "A clínica" },
   { id: "tratamentos", label: "Tratamentos" },
+  { id: "brilho", label: "Brilho" },
   { id: "diferenciais", label: "Percurso" },
   { id: "contato", label: "Contato" },
 ] as const

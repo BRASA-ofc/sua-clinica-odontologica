@@ -1,64 +1,66 @@
-import { ArrowUpRight, Clock3, MapPin } from 'lucide-react'
+import { ArrowUpRight, Clock3, MapPin, Phone } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { clinic, contactCopy } from '../data/clinic'
 import { Reveal } from '../components/ui/Reveal'
+import { SectionTitle } from '../components/aero/SectionTitle'
+import { Magnetic } from '../components/aero/Magnetic'
+import { Tilt } from '../components/aero/Tilt'
 
 export function Contact() {
   return (
-    <section id="contato" className="relative scroll-mt-28 overflow-hidden bg-white/50">
-      <p
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-8 left-0 font-display text-[16vw] leading-none font-semibold tracking-tight text-transparent"
-        style={{ WebkitTextStroke: '1px rgba(18,38,46,0.12)' }}
-      >
-        cuidado
-      </p>
-      <div className="relative mx-auto grid max-w-6xl gap-14 px-5 py-28 md:px-8 lg:grid-cols-12">
-        <Reveal className="lg:col-span-7">
-          <p className="text-[11px] tracking-[0.32em] text-lagoon uppercase">{contactCopy.kicker}</p>
-          <h2 className="mt-4 font-display text-[clamp(2.6rem,5vw,5rem)] leading-[0.92] font-semibold tracking-[-0.045em] text-navy">
-            {contactCopy.title}
-          </h2>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-navy/70">{contactCopy.lead}</p>
-          <Link to="/conversa" className="btn btn-solid group mt-8">
-            {contactCopy.action}
-            <ArrowUpRight
-              size={18}
-              className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-            />
-          </Link>
+    <section id="contato" className="relative scroll-mt-24">
+      <div className="mx-auto grid grid-cols-1 max-w-6xl items-center gap-12 px-5 py-24 md:px-8 lg:grid-cols-12">
+        <Reveal className="relative lg:col-span-7">
+          <div className="soap float-b pointer-events-none absolute -top-10 -left-6 h-24 w-24" aria-hidden="true" />
+          <div className="soap float-c pointer-events-none absolute right-10 -bottom-8 h-14 w-14" aria-hidden="true" />
+          <SectionTitle kicker={contactCopy.kicker} title="Vamos cuidar do seu" highlight="sorriso." green />
+          <p className="mt-6 max-w-xl text-lg leading-relaxed font-semibold text-navy/80">{contactCopy.lead}</p>
+          <Magnetic className="mt-8">
+            <Link to="/conversa" className="btn btn-green px-7 py-4 text-lg">
+              {contactCopy.action}
+              <ArrowUpRight size={20} aria-hidden="true" />
+            </Link>
+          </Magnetic>
         </Reveal>
+
         <Reveal delay={0.1} className="lg:col-span-5">
-          <div className="rounded-[1.8rem] border border-mist bg-ice p-7">
-            <div className="flex gap-3">
-              <MapPin className="mt-0.5 shrink-0 text-lagoon" size={18} aria-hidden="true" />
+          <Tilt max={6} className="glass rounded-[2rem] p-7">
+            <div className="flex gap-4">
+              <span className="orb grid h-11 w-11 shrink-0 place-items-center text-white">
+                <MapPin size={18} aria-hidden="true" />
+              </span>
               <div>
-                <p className="text-navy">{clinic.address.line}</p>
-                <p className="text-navy">{clinic.address.city}</p>
-                <p className="mt-2 text-xs text-navy/55">{clinic.address.note}</p>
+                <p className="font-bold text-navy">{clinic.address.line}</p>
+                <p className="text-navy/85">{clinic.address.city}</p>
+                <p className="mt-1 text-xs text-navy/60">{clinic.address.note}</p>
               </div>
             </div>
-            <div className="mt-6 flex gap-3 border-t border-mist pt-6">
-              <Clock3 className="mt-0.5 shrink-0 text-lagoon" size={18} aria-hidden="true" />
+            <div className="mt-6 flex gap-4 border-t border-white/80 pt-6">
+              <span className="orb orb-green grid h-11 w-11 shrink-0 place-items-center text-white">
+                <Clock3 size={18} aria-hidden="true" />
+              </span>
               <div>
                 <ul className="space-y-1 text-navy">
                   {clinic.hours.map((item) => (
                     <li key={item.days}>
-                      {item.days}
-                      <span className="text-navy/55"> · {item.time}</span>
+                      <span className="font-bold">{item.days}</span>
+                      <span className="text-navy/70"> · {item.time}</span>
                     </li>
                   ))}
                 </ul>
-                <p className="mt-2 text-xs text-navy/55">{clinic.hoursNote}</p>
+                <p className="mt-1 text-xs text-navy/60">{clinic.hoursNote}</p>
               </div>
             </div>
-            <div className="mt-6 border-t border-mist pt-6">
-              <p className="font-display text-2xl font-semibold tracking-tight text-navy">
-                {clinic.phoneDisplay}
-              </p>
-              <p className="mt-1 text-xs text-navy/55">{clinic.phoneNote}</p>
+            <div className="mt-6 flex gap-4 border-t border-white/80 pt-6">
+              <span className="orb grid h-11 w-11 shrink-0 place-items-center text-white">
+                <Phone size={18} aria-hidden="true" />
+              </span>
+              <div>
+                <p className="font-display text-2xl font-black text-gloss">{clinic.phoneDisplay}</p>
+                <p className="mt-1 text-xs text-navy/60">{clinic.phoneNote}</p>
+              </div>
             </div>
-          </div>
+          </Tilt>
         </Reveal>
       </div>
     </section>
