@@ -104,6 +104,7 @@ function Scene({ control, paused, detail, onHover, onReady }: SceneProps) {
   const orbitGroup = useRef<THREE.Group>(null)
   const spin = useRef(0)
   const hovered = useRef<Tooth | null>(null)
+  const framed = useRef(false)
   const { gl, scene, size } = useThree()
   const aspect = size.width / Math.max(1, size.height)
 
@@ -170,8 +171,11 @@ function Scene({ control, paused, detail, onHover, onReady }: SceneProps) {
     }
 
     const camera = state.camera as THREE.PerspectiveCamera
-    const fit = 2.25 / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) / Math.min(1, aspect)
-    camera.position.z = THREE.MathUtils.damp(camera.position.z, fit, 4, delta)
+    const tanHalf = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))
+    const fit = Math.max(2.25 / (tanHalf * aspect), 1.55 / tanHalf)
+    // no primeiro quadro já posiciona; depois acompanha mudanças de tamanho suavemente
+    camera.position.z = framed.current ? THREE.MathUtils.damp(camera.position.z, fit, 4, delta) : fit
+    framed.current = true
     camera.position.x = THREE.MathUtils.damp(camera.position.x, c.pointer.x * 0.35, 2, delta)
     camera.position.y = THREE.MathUtils.damp(camera.position.y, 0.3 - c.pointer.y * 0.25, 2, delta)
     camera.lookAt(0, 0, 0)

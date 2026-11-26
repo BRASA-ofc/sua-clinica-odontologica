@@ -1,5 +1,4 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { Hand } from 'lucide-react'
 import { Component, lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import type { ReactNode, RefObject } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -45,7 +44,7 @@ export function ArchStage({ control }: { control: RefObject<ArchControl> }) {
   const [ready, setReady] = useState(false)
   const [visible, setVisible] = useState(true)
   const [detail] = useState<'high' | 'low'>(() => (window.matchMedia('(max-width: 767px)').matches ? 'low' : 'high'))
-  const [hover, setHover] = useState(false)
+  const [, setHover] = useState(false)
   const [bursts, setBursts] = useState<Burst[]>([])
   const [grabbing, setGrabbing] = useState(false)
   const onReady = useCallback(() => setReady(true), [])
@@ -180,22 +179,6 @@ export function ArchStage({ control }: { control: RefObject<ArchControl> }) {
           </span>
         ))}
       </AnimatePresence>
-
-      <div className="pointer-events-none absolute inset-x-0 bottom-[7%] flex justify-center">
-        <AnimatePresence mode="wait">
-          <motion.p
-            key={hover ? 'hover' : 'hint'}
-            className="flex items-center gap-2 rounded-full border border-white/90 bg-white/75 px-4 py-2 text-xs font-bold whitespace-nowrap text-navy shadow-lg backdrop-blur-md"
-            initial={{ opacity: 0, y: 8, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -6, scale: 0.95 }}
-            transition={{ type: 'spring', stiffness: 380, damping: 26 }}
-          >
-            <Hand size={14} aria-hidden="true" />
-            {hover ? 'Clique para ver o sorriso brilhar' : 'Arraste para girar · clique para brilhar'}
-          </motion.p>
-        </AnimatePresence>
-      </div>
     </div>
   )
 }

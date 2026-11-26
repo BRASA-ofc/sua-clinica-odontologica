@@ -1,6 +1,6 @@
 import { motion, useMotionValue, useMotionValueEvent, useScroll, useSpring, useTransform } from 'framer-motion'
-import { ArrowRight, ShieldCheck, Sparkles } from 'lucide-react'
-import { useRef } from 'react'
+import { ArrowRight, Sparkles } from 'lucide-react'
+import { useRef, useState } from 'react'
 import { hero } from '../data/clinic'
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
 import { ArchStage } from '../components/tooth/ArchStage'
@@ -21,12 +21,13 @@ export function Hero() {
   const textY = useSpring(ty, { stiffness: 80, damping: 18 })
 
   const { scrollYProgress } = useScroll({ target: section, offset: ['start start', 'end start'] })
+  const [wide] = useState(() => window.matchMedia('(min-width: 1024px)').matches)
   useMotionValueEvent(scrollYProgress, 'change', (value) => {
-    control.current.scroll = value
+    control.current.scroll = wide ? value : 0
   })
-  const stageY = useTransform(scrollYProgress, [0, 1], [0, 160])
-  const textFade = useTransform(scrollYProgress, [0, 0.7], [1, 0])
-  const textLift = useTransform(scrollYProgress, [0, 1], [0, -80])
+  const stageY = useTransform(scrollYProgress, [0, 1], [0, wide ? 160 : 0])
+  const textFade = useTransform(scrollYProgress, [0, 0.7], [1, wide ? 0 : 1])
+  const textLift = useTransform(scrollYProgress, [0, 1], [0, wide ? -80 : 0])
 
   return (
     <section
@@ -44,7 +45,7 @@ export function Hero() {
         ty.set(0)
       }}
     >
-      <div className="relative mx-auto grid min-h-[100svh] max-w-7xl grid-cols-1 items-center gap-4 px-5 pt-28 pb-12 md:px-8 lg:grid-cols-12 lg:pt-24">
+      <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-0 px-5 pt-24 pb-6 md:px-8 lg:min-h-[100svh] lg:grid-cols-12 lg:gap-4 lg:pt-24 lg:pb-12">
         <motion.div className="relative z-10 lg:col-span-6" style={{ x: textX, y: textY }}>
           <motion.div style={{ opacity: textFade, y: textLift }}>
             <motion.span className="kicker" initial={{ opacity: 0, y: 14, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={spring}>
@@ -109,7 +110,6 @@ export function Hero() {
                     <CountUp value={Number(signal.value)} pad={2} />
                   </dt>
                   <dd className="mt-0.5 text-xs leading-tight font-bold text-navy sm:text-sm">{signal.label}</dd>
-                  <dd className="mt-0.5 text-[10px] font-bold tracking-[0.1em] text-lagoon/80 uppercase">{signal.note}</dd>
                 </motion.div>
               ))}
             </dl>
@@ -117,24 +117,13 @@ export function Hero() {
         </motion.div>
 
         <motion.div
-          className="relative h-[58vh] min-h-[380px] lg:col-span-6 lg:h-[84vh]"
+          className="relative -mx-5 h-[46vh] max-h-[400px] min-h-[280px] md:mx-0 lg:col-span-6 lg:h-[84vh] lg:max-h-none"
           style={{ y: stageY }}
           initial={{ opacity: 0, scale: 0.75 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: 'spring', stiffness: 70, damping: 14, delay: 0.2 }}
         >
           <ArchStage control={control} />
-          <motion.div
-            className="glass float-b pointer-events-none absolute top-[12%] right-2 hidden items-center gap-2 rounded-full py-1.5 pr-4 pl-1.5 text-sm font-bold text-navy sm:flex"
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ ...spring, delay: 1.3 }}
-          >
-            <span className="orb orb-green grid h-8 w-8 place-items-center text-white">
-              <ShieldCheck size={15} aria-hidden="true" />
-            </span>
-            Planejamento em 3D
-          </motion.div>
         </motion.div>
       </div>
 

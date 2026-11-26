@@ -31,7 +31,7 @@ export function Services() {
           </Reveal>
           <Reveal delay={0.1} className="lg:col-span-5">
             <p className="font-semibold text-navy/75">
-              Cada tratamento começa por uma avaliação. Abra os cartões para entender como cada cuidado funciona.
+              Toque em um cartão para ver os detalhes.
             </p>
           </Reveal>
         </div>

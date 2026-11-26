@@ -32,7 +32,6 @@ export function Contact() {
               <div>
                 <p className="font-bold text-navy">{clinic.address.line}</p>
                 <p className="text-navy/85">{clinic.address.city}</p>
-                <p className="mt-1 text-xs text-navy/60">{clinic.address.note}</p>
               </div>
             </div>
             <div className="mt-6 flex gap-4 border-t border-white/80 pt-6">
@@ -48,7 +47,6 @@ export function Contact() {
                     </li>
                   ))}
                 </ul>
-                <p className="mt-1 text-xs text-navy/60">{clinic.hoursNote}</p>
               </div>
             </div>
             <div className="mt-6 flex gap-4 border-t border-white/80 pt-6">
@@ -57,9 +55,9 @@ export function Contact() {
               </span>
               <div>
                 <p className="font-display text-2xl font-black text-gloss">{clinic.phoneDisplay}</p>
-                <p className="mt-1 text-xs text-navy/60">{clinic.phoneNote}</p>
               </div>
             </div>
+            <p className="mt-6 border-t border-white/80 pt-4 text-xs text-navy/60">Dados fictícios, apenas para demonstração.</p>
           </Tilt>
         </Reveal>
       </div>

@@ -1,7 +1,6 @@
 import { animate, motion, useMotionValue, useMotionValueEvent, useTransform } from 'framer-motion'
 import type { MotionValue } from 'framer-motion'
 import type { CSSProperties } from 'react'
-import { MoveHorizontal } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
 import { Reveal } from '../components/ui/Reveal'
@@ -122,8 +121,7 @@ export function Shine() {
         <Reveal className="lg:col-span-5">
           <SectionTitle kicker="Prevenção" title="Veja a limpeza" highlight="em ação." />
           <p className="mt-5 leading-relaxed font-semibold text-navy/75">
-            Arraste a barra ou passe o dedo sobre o sorriso. A limpeza profissional remove placa e tártaro em áreas que a escova
-            alcança com menos facilidade.
+            Arraste sobre o sorriso e veja a diferença.
           </p>
           <div className="mt-8">
             <div className="flex justify-between text-xs font-extrabold tracking-[0.16em] text-lagoon uppercase">
@@ -237,10 +235,6 @@ export function Shine() {
                 ))}
               </motion.g>
             </svg>
-            <p className="mt-2 flex items-center justify-center gap-2 text-xs font-bold text-navy/60">
-              <MoveHorizontal size={14} aria-hidden="true" />
-              {touched ? 'Você está no controle' : 'Arraste sobre o sorriso'}
-            </p>
           </div>
         </Reveal>
       </div>

@@ -91,14 +91,14 @@ export function Trust() {
                     </span>
                   </div>
                   <p className="mt-5 text-xl font-bold">{metric.label}</p>
-                  <p className="mt-2 text-sm text-white/70">{metric.note}</p>
+                  {metric.note ? <p className="mt-2 text-sm text-white/70">{metric.note}</p> : null}
                 </div>
               </Reveal>
             ))}
             <Reveal delay={0.2} className="sm:col-span-2">
               <div className="rounded-[2rem] border border-white/30 bg-gradient-to-r from-white/20 to-white/5 p-6">
                 <p className="font-display text-4xl leading-tight font-black md:text-5xl">{trust.statement}</p>
-                <p className="mt-3 max-w-md text-sm text-white/75">{trust.statementNote}</p>
+                {trust.statementNote ? <p className="mt-3 max-w-md text-sm text-white/75">{trust.statementNote}</p> : null}
               </div>
             </Reveal>
           </div>

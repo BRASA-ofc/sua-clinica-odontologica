@@ -31,11 +31,11 @@ export function Home() {
       <main id="conteudo" className="relative z-10">
         <Hero />
         <Marquee />
+        <Shine />
         <Proposal />
         <Dentist />
         <Trust />
         <Services />
-        <Shine />
         <Differentials />
         <Contact />
       </main>

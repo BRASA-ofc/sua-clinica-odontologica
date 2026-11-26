@@ -56,33 +56,9 @@ export function Dentist() {
           <Reveal delay={0.1} className="glass mt-8 rounded-[1.8rem] p-6">
             <p className="font-display text-3xl font-black text-gloss">{dentist.name}</p>
             <p className="mt-1 font-bold text-navy/80">{dentist.role}</p>
-            <p className="mt-2 text-xs font-bold tracking-[0.1em] text-lagoon uppercase">{dentist.fictionNote}</p>
-            <p className="mt-3 text-sm text-navy/70">{dentist.credential}</p>
-
-            <div className="mt-6 grid grid-cols-1 gap-6 border-t border-white/80 pt-6 sm:grid-cols-2">
-              <div>
-                <p className="text-[11px] font-extrabold tracking-[0.18em] text-lagoon uppercase">Atuação</p>
-                <p className="mt-2 font-semibold text-navy">{dentist.years}</p>
-                <p className="mt-1 text-xs text-navy/60">{dentist.yearsNote}</p>
-              </div>
-              <div>
-                <p className="text-[11px] font-extrabold tracking-[0.18em] text-lagoon uppercase">Abordagem</p>
-                <p className="mt-2 font-semibold text-navy">{dentist.approach}</p>
-              </div>
-            </div>
-
-            <div className="mt-6 border-t border-white/80 pt-6">
-              <p className="text-[11px] font-extrabold tracking-[0.18em] text-lagoon uppercase">Formação demonstrativa</p>
-              <ul className="mt-3 space-y-2">
-                {dentist.formation.map((item) => (
-                  <li key={item} className="flex gap-2 text-sm text-navy/85">
-                    <span className="orb mt-1 h-3 w-3 shrink-0" aria-hidden="true" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-3 text-xs text-navy/60">{dentist.formationNote}</p>
-            </div>
+            <p className="mt-2 text-xs font-bold tracking-[0.1em] text-lagoon uppercase">
+              {dentist.fictionNote} · {dentist.credential}
+            </p>
           </Reveal>
 
           <Reveal delay={0.18}>
