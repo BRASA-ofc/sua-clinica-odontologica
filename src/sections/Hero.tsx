@@ -1,144 +1,126 @@
-import { motion, useMotionValue, useMotionValueEvent, useScroll, useSpring, useTransform } from 'framer-motion'
-import { ArrowRight, Sparkles } from 'lucide-react'
-import { useRef, useState } from 'react'
-import { hero } from '../data/clinic'
-import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
-import { ArchStage } from '../components/tooth/ArchStage'
-import { Magnetic } from '../components/aero/Magnetic'
-import { CountUp } from '../components/aero/CountUp'
-import type { ArchControl } from '../three/ArchCanvas'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { ArrowRight, Clock3, MessageCircle, ShieldCheck, Star } from 'lucide-react'
+import { useRef } from 'react'
+import { Link } from 'react-router-dom'
+import { clinic, hero } from '../data/clinic'
+import { Photo } from '../components/ui/Photo'
 
 const ease = [0.22, 1, 0.36, 1] as const
-const spring = { type: 'spring', stiffness: 160, damping: 16 } as const
 
 export function Hero() {
-  const paused = usePrefersReducedMotion()
   const section = useRef<HTMLElement>(null)
-  const control = useRef<ArchControl>({ pointer: { x: 0, y: 0 }, drag: 0, fling: 0, bite: 0, scroll: 0, flash: 0 })
-  const tx = useMotionValue(0)
-  const ty = useMotionValue(0)
-  const textX = useSpring(tx, { stiffness: 80, damping: 18 })
-  const textY = useSpring(ty, { stiffness: 80, damping: 18 })
-
   const { scrollYProgress } = useScroll({ target: section, offset: ['start start', 'end start'] })
-  const [wide] = useState(() => window.matchMedia('(min-width: 1024px)').matches)
-  useMotionValueEvent(scrollYProgress, 'change', (value) => {
-    control.current.scroll = wide ? value : 0
-  })
-  const stageY = useTransform(scrollYProgress, [0, 1], [0, wide ? 160 : 0])
-  const textFade = useTransform(scrollYProgress, [0, 0.7], [1, wide ? 0 : 1])
-  const textLift = useTransform(scrollYProgress, [0, 1], [0, wide ? -80 : 0])
+  const photoY = useTransform(scrollYProgress, [0, 1], [0, 60])
+  const photoScale = useTransform(scrollYProgress, [0, 1], [1, 1.06])
 
   return (
-    <section
-      ref={section}
-      id="inicio"
-      className="relative overflow-hidden"
-      onPointerMove={(event) => {
-        if (paused || event.pointerType === 'touch') return
-        const box = event.currentTarget.getBoundingClientRect()
-        tx.set(((event.clientX - box.left) / box.width - 0.5) * -14)
-        ty.set(((event.clientY - box.top) / box.height - 0.5) * -10)
-      }}
-      onPointerLeave={() => {
-        tx.set(0)
-        ty.set(0)
-      }}
-    >
-      <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-0 px-5 pt-24 pb-6 md:px-8 lg:min-h-[100svh] lg:grid-cols-12 lg:gap-4 lg:pt-24 lg:pb-12">
-        <motion.div className="relative z-10 lg:col-span-6" style={{ x: textX, y: textY }}>
-          <motion.div style={{ opacity: textFade, y: textLift }}>
-            <motion.span className="kicker" initial={{ opacity: 0, y: 14, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={spring}>
-              <Sparkles size={14} aria-hidden="true" />
-              {hero.kicker}
-            </motion.span>
+    <section ref={section} id="inicio" className="relative overflow-hidden">
+      <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-5 pt-32 pb-16 md:px-8 lg:grid-cols-12 lg:gap-10 lg:pt-36 lg:pb-24">
+        <div className="lg:col-span-6">
+          <motion.span
+            className="kicker"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease }}
+          >
+            {hero.kicker}
+          </motion.span>
 
-            <h1 className="mt-6 font-display text-[clamp(2.7rem,5.6vw,5.3rem)] leading-[1] font-black tracking-[-0.03em] text-navy">
-              {hero.title.map((line, index) => (
-                <span key={line} className="block overflow-hidden pb-[0.1em]">
-                  <motion.span
-                    className={`block ${index === 2 ? 'text-gloss-green' : index === 1 ? 'text-gloss' : ''}`}
-                    initial={{ y: '110%', rotate: 3 }}
-                    animate={{ y: '0%', rotate: 0 }}
-                    transition={{ duration: 0.9, delay: 0.1 + index * 0.12, ease }}
-                  >
-                    {line}
-                  </motion.span>
-                </span>
-              ))}
-            </h1>
+          <motion.h1
+            className="mt-5 font-serif text-[clamp(2.6rem,5.4vw,4.4rem)] leading-[1.04] font-medium tracking-[-0.025em] text-navy"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.08, ease }}
+          >
+            {hero.titleStart} <span className="serif-em">{hero.titleEmphasis}</span> {hero.titleEnd}
+          </motion.h1>
 
-            <motion.p
-              className="mt-6 max-w-lg text-lg leading-relaxed font-semibold text-navy/80 md:text-xl"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.5, ease }}
-            >
-              {hero.subtitle}
-            </motion.p>
+          <motion.p
+            className="mt-5 max-w-md text-lg leading-relaxed text-navy/70"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease }}
+          >
+            {hero.subtitle}
+          </motion.p>
 
-            <motion.div
-              className="mt-8 flex flex-col gap-3 sm:flex-row"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.65, ease }}
-            >
-              <Magnetic>
-                <a href="#tratamentos" className="btn btn-solid group w-full whitespace-nowrap sm:w-auto">
-                  {hero.primary}
-                  <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
-                </a>
-              </Magnetic>
-              <Magnetic>
-                <a href="#contato" className="btn btn-ghost w-full whitespace-nowrap sm:w-auto">
-                  {hero.secondary}
-                </a>
-              </Magnetic>
-            </motion.div>
-
-            <dl className="mt-10 grid grid-cols-3 gap-3 sm:max-w-lg">
-              {hero.signals.map((signal, index) => (
-                <motion.div
-                  key={signal.label}
-                  className={`glass rounded-2xl px-3 py-3 text-center sm:px-4 ${['float-a', 'float-b', 'float-c'][index]}`}
-                  initial={{ opacity: 0, scale: 0.6, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ ...spring, delay: 0.85 + index * 0.12 }}
-                  whileHover={{ scale: 1.08, y: -4 }}
-                >
-                  <dt className="font-display text-3xl font-black text-gloss">
-                    <CountUp value={Number(signal.value)} pad={2} />
-                  </dt>
-                  <dd className="mt-0.5 text-xs leading-tight font-bold text-navy sm:text-sm">{signal.label}</dd>
-                </motion.div>
-              ))}
-            </dl>
+          <motion.div
+            className="mt-8 flex flex-col gap-3 sm:flex-row"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3, ease }}
+          >
+            <Link to="/conversa" className="btn btn-solid group">
+              {hero.primary}
+              <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+            </Link>
+            <Link to="/conversa" className="btn btn-ghost">
+              <MessageCircle size={18} aria-hidden="true" />
+              {hero.secondary}
+            </Link>
           </motion.div>
-        </motion.div>
+
+          <motion.div
+            className="mt-8 flex items-center gap-3 text-sm text-navy/70"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.45 }}
+          >
+            <span className="flex text-amber-400" aria-hidden="true">
+              {Array.from({ length: 5 }, (_, i) => (
+                <Star key={i} size={16} fill="currentColor" strokeWidth={0} />
+              ))}
+            </span>
+            <span>
+              <strong className="text-navy">{hero.rating}</strong> · {hero.ratingNote}
+            </span>
+          </motion.div>
+        </div>
 
         <motion.div
-          className="relative -mx-5 h-[46vh] max-h-[400px] min-h-[280px] md:mx-0 lg:col-span-6 lg:h-[84vh] lg:max-h-none"
-          style={{ y: stageY }}
-          initial={{ opacity: 0, scale: 0.75 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: 'spring', stiffness: 70, damping: 14, delay: 0.2 }}
+          className="relative lg:col-span-6"
+          initial={{ opacity: 0, y: 30, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 1, delay: 0.15, ease }}
         >
-          <ArchStage control={control} />
+          <div className="relative overflow-hidden rounded-[2rem] shadow-[0_30px_70px_rgba(11,47,75,0.18)]">
+            <motion.div style={{ y: photoY, scale: photoScale }}>
+              <Photo src={hero.photo} alt={hero.photoAlt} priority className="aspect-[4/5] w-full object-cover sm:aspect-[5/4] lg:aspect-[4/5]" />
+            </motion.div>
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy/25 via-transparent to-white/10" />
+          </div>
+
+          {/* cartões flutuantes de vidro */}
+          <motion.div
+            className="glass float-a absolute -left-3 bottom-8 flex items-center gap-3 rounded-2xl px-4 py-3 sm:-left-8"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.7, ease }}
+          >
+            <span className="orb grid h-10 w-10 place-items-center text-white">
+              <Clock3 size={18} aria-hidden="true" />
+            </span>
+            <span className="text-sm">
+              <span className="block font-bold text-navy">Aberto hoje</span>
+              <span className="text-navy/60">{clinic.hours[0].time}</span>
+            </span>
+          </motion.div>
+          <motion.div
+            className="glass float-b absolute -right-3 top-8 flex items-center gap-3 rounded-2xl px-4 py-3 sm:-right-6"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.85, ease }}
+          >
+            <span className="orb grid h-10 w-10 place-items-center text-white">
+              <ShieldCheck size={18} aria-hidden="true" />
+            </span>
+            <span className="text-sm">
+              <span className="block font-bold text-navy">Plano por escrito</span>
+              <span className="text-navy/60">antes de começar</span>
+            </span>
+          </motion.div>
         </motion.div>
       </div>
-
-      <motion.a
-        href="#proposta"
-        aria-label="Rolar para a próxima seção"
-        className="absolute bottom-5 left-1/2 hidden h-12 w-7 -translate-x-1/2 justify-center rounded-full border-2 border-white/90 bg-white/30 pt-2 backdrop-blur-sm lg:flex"
-        style={{ opacity: textFade }}
-      >
-        <motion.span
-          className="h-2 w-2 rounded-full bg-sky"
-          animate={paused ? undefined : { y: [0, 16, 0], opacity: [1, 0.2, 1] }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-        />
-      </motion.a>
     </section>
   )
 }

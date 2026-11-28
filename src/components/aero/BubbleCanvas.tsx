@@ -94,7 +94,7 @@ export function BubbleCanvas() {
     const spawn = (anywhere: boolean, x?: number, y?: number, r?: number): Bubble => ({
       x: x ?? Math.random() * width,
       y: y ?? (anywhere ? Math.random() * height : height + 80),
-      r: r ?? 10 + Math.random() ** 2 * 46,
+      r: r ?? 8 + Math.random() ** 2 * 30,
       vx: (Math.random() - 0.5) * 12,
       vy: -(18 + Math.random() * 30),
       phase: Math.random() * Math.PI * 2,
@@ -103,7 +103,7 @@ export function BubbleCanvas() {
     })
 
     resize()
-    const target = width < 768 ? 14 : 26
+    const target = width < 768 ? 5 : 11
     for (let i = 0; i < target; i += 1) bubbles.push(spawn(true))
 
     const pop = (bubble: Bubble) => {
@@ -123,18 +123,9 @@ export function BubbleCanvas() {
       }
     }
 
-    let travel = 0
     const onMove = (event: PointerEvent) => {
-      if (pointer.x > -9000) travel += Math.hypot(event.clientX - pointer.x, event.clientY - pointer.y)
       pointer.x = event.clientX
       pointer.y = event.clientY
-      // rastro: uma bolhinha a cada ~70px percorridos pelo cursor
-      if (event.pointerType === 'mouse' && travel > 70) {
-        travel = 0
-        const trail = spawn(false, event.clientX + (Math.random() - 0.5) * 16, event.clientY + 10, 3 + Math.random() * 7)
-        trail.vy = -(40 + Math.random() * 40)
-        bubbles.push(trail)
-      }
     }
     const onLeave = () => {
       pointer.x = -9999

@@ -1,80 +1,66 @@
 import { motion } from 'framer-motion'
-import { ShieldCheck, Smile, Sparkles } from 'lucide-react'
+import { Award } from 'lucide-react'
 import { dentist } from '../data/clinic'
 import { Photo } from '../components/ui/Photo'
 import { Reveal } from '../components/ui/Reveal'
 import { SectionTitle } from '../components/aero/SectionTitle'
-import { Tilt } from '../components/aero/Tilt'
-
-const badges = [
-  { text: 'Atendimento sem pressa', Icon: Smile, className: 'top-[14%] -left-3 md:-left-8 float-a' },
-  { text: 'Plano explicado', Icon: ShieldCheck, className: 'top-[48%] -right-3 md:-right-8 float-b', green: true },
-  { text: 'Sorriso brilhante', Icon: Sparkles, className: '-bottom-5 right-6 float-c' },
-]
+import { CountUp } from '../components/aero/CountUp'
 
 export function Dentist() {
   return (
-    <section id="dentista" className="relative scroll-mt-24">
-      <div className="mx-auto grid grid-cols-1 max-w-6xl items-center gap-14 px-5 py-24 md:px-8 lg:grid-cols-12">
-        <Reveal className="relative lg:col-span-6">
-          <Tilt max={6} className="glass overflow-hidden rounded-[2.2rem] p-2.5">
-            <div className="relative">
-              <div className="relative overflow-hidden rounded-[1.8rem]">
-                <Photo
-                  src={dentist.portrait}
-                  alt={dentist.portraitAlt}
-                  priority
-                  className="aspect-[4/5] h-auto max-h-[78vh] w-full object-cover object-[22%_18%]"
-                />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/25 via-transparent to-sky/40" />
-                <p className="absolute right-4 bottom-4 left-4 rounded-xl bg-white/75 px-3 py-2 text-xs font-semibold text-navy backdrop-blur-md">
-                  {dentist.imageNote}
-                </p>
-              </div>
+    <section id="profissional" className="relative scroll-mt-24">
+      <div className="mx-auto max-w-6xl px-5 py-12 md:px-8">
+        <div className="glass grid grid-cols-1 items-center gap-10 overflow-hidden rounded-[2.25rem] p-4 md:p-6 lg:grid-cols-12 lg:gap-12">
+          <Reveal className="relative lg:col-span-5">
+            <div className="overflow-hidden rounded-[1.75rem]">
+              <Photo
+                src={dentist.portrait}
+                alt={dentist.portraitAlt}
+                className="aspect-[4/5] max-h-[560px] w-full object-cover object-[22%_18%] transition-transform duration-[1.4s] ease-out hover:scale-105"
+              />
             </div>
-          </Tilt>
-          {badges.map(({ text, Icon, className, green }) => (
-            <motion.span
-              key={text}
-              className={`glass absolute z-10 flex items-center gap-2 rounded-full py-1.5 pr-4 pl-1.5 text-sm font-bold text-navy ${className}`}
-              whileHover={{ scale: 1.1, rotate: -2 }}
+            <motion.div
+              className="glass float-a absolute right-4 bottom-4 flex items-center gap-2 rounded-full py-1.5 pr-4 pl-1.5 text-sm font-bold text-navy"
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
             >
-              <span className={`orb ${green ? 'orb-green' : ''} grid h-8 w-8 place-items-center text-white`}>
-                <Icon size={15} aria-hidden="true" />
+              <span className="orb grid h-8 w-8 place-items-center text-white">
+                <Award size={15} aria-hidden="true" />
               </span>
-              {text}
-            </motion.span>
-          ))}
-        </Reveal>
-
-        <div className="lg:col-span-6">
-          <Reveal>
-            <SectionTitle kicker="Quem cuida" title="Cuidar do seu sorriso começa" highlight="com confiança." />
-            <p className="mt-6 text-lg leading-relaxed font-semibold text-navy/80">{dentist.bio}</p>
+              Responsável técnica
+            </motion.div>
           </Reveal>
 
-          <Reveal delay={0.1} className="glass mt-8 rounded-[1.8rem] p-6">
-            <p className="font-display text-3xl font-black text-gloss">{dentist.name}</p>
-            <p className="mt-1 font-bold text-navy/80">{dentist.role}</p>
-            <p className="mt-2 text-xs font-bold tracking-[0.1em] text-lagoon uppercase">
-              {dentist.fictionNote} · {dentist.credential}
-            </p>
-          </Reveal>
-
-          <Reveal delay={0.18}>
-            <ul className="mt-6 flex flex-wrap gap-2">
-              {dentist.differentials.map((item) => (
-                <motion.li
-                  key={item}
-                  className="btn-ghost rounded-full px-4 py-2 text-sm font-bold"
-                  whileHover={{ y: -4, scale: 1.05 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 12 }}
-                >
-                  {item}
-                </motion.li>
+          <div className="px-2 pb-4 lg:col-span-7 lg:pr-8">
+            <Reveal>
+              <SectionTitle kicker="Quem cuida" title="Experiência com" highlight="cuidado humano." />
+              <p className="mt-5 max-w-lg text-lg leading-relaxed text-navy/70">{dentist.bio}</p>
+            </Reveal>
+            <Reveal delay={0.1} className="mt-8">
+              <p className="font-serif text-2xl font-medium text-navy">{dentist.name}</p>
+              <p className="mt-1 text-navy/65">{dentist.role}</p>
+              <p className="mt-1 text-xs font-bold tracking-[0.08em] text-navy/45 uppercase">{dentist.credential}</p>
+            </Reveal>
+            <Reveal delay={0.16} className="mt-8 flex flex-wrap items-center gap-8">
+              {dentist.stats.map((stat) => (
+                <div key={stat.label}>
+                  <p className="font-serif text-4xl font-medium text-sky">
+                    <CountUp value={stat.value} />
+                  </p>
+                  <p className="text-sm text-navy/60">{stat.label}</p>
+                </div>
               ))}
-            </ul>
-          </Reveal>
+              <ul className="flex flex-wrap gap-2">
+                {dentist.highlights.map((item) => (
+                  <li key={item} className="rounded-full bg-sky/10 px-3.5 py-1.5 text-sm font-bold text-lagoon">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          </div>
         </div>
       </div>
     </section>

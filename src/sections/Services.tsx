@@ -1,14 +1,12 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowRight, Check, X } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, Check, X } from 'lucide-react'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { services } from '../data/clinic'
-import { ServiceArt } from '../components/services/ServiceArt'
 import { Photo } from '../components/ui/Photo'
 import { Reveal } from '../components/ui/Reveal'
 import { SectionTitle } from '../components/aero/SectionTitle'
-import { Tilt } from '../components/aero/Tilt'
 
 type Service = (typeof services)[number]
 
@@ -25,94 +23,51 @@ export function Services() {
   return (
     <section id="tratamentos" className="relative scroll-mt-24">
       <div className="mx-auto max-w-6xl px-5 py-24 md:px-8">
-        <div className="grid grid-cols-1 items-end gap-8 lg:grid-cols-12">
-          <Reveal className="lg:col-span-7">
-            <SectionTitle kicker="Tratamentos" title="Quatro cuidados para" highlight="um sorriso brilhante." />
-          </Reveal>
-          <Reveal delay={0.1} className="lg:col-span-5">
-            <p className="font-semibold text-navy/75">
-              Toque em um cartão para ver os detalhes.
-            </p>
-          </Reveal>
-        </div>
+        <Reveal className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
+          <SectionTitle kicker="Tratamentos" title="Cuidados para cada" highlight="fase do sorriso." />
+          <p className="max-w-xs text-navy/60">Toque em um tratamento para ver os detalhes.</p>
+        </Reveal>
 
-        <div className="mt-14 grid grid-cols-1 gap-7 md:grid-cols-2">
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {services.map((service, index) => (
-            <Reveal key={service.id} delay={(index % 2) * 0.12}>
-              <ServiceCard
-                service={service}
-                onOpen={(node) => {
-                  trigger.current = node
+            <motion.div
+              key={service.id}
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.7, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <button
+                type="button"
+                data-service={service.id}
+                onClick={(event) => {
+                  trigger.current = event.currentTarget
                   setOpenId(service.id)
                 }}
-              />
-            </Reveal>
+                className="card group flex h-full w-full flex-col overflow-hidden rounded-[1.75rem] p-2 text-left"
+              >
+                <span className="relative block aspect-[4/3] overflow-hidden rounded-[1.4rem] bg-foam">
+                  <Photo
+                    src={service.image}
+                    alt=""
+                    className="h-full w-full object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-110"
+                  />
+                  <span className="absolute top-3 right-3 grid h-9 w-9 place-items-center rounded-full bg-white/90 text-navy opacity-0 shadow transition-all duration-500 group-hover:opacity-100 group-hover:rotate-45">
+                    <ArrowUpRight size={16} aria-hidden="true" />
+                  </span>
+                </span>
+                <span className="flex flex-1 flex-col px-3 pt-4 pb-3">
+                  <span className="text-xs font-extrabold tracking-[0.14em] text-sky uppercase">{service.kicker}</span>
+                  <span className="mt-1 font-serif text-xl font-medium text-navy">{service.title}</span>
+                  <span className="mt-2 text-sm leading-relaxed text-navy/65">{service.summary}</span>
+                </span>
+              </button>
+            </motion.div>
           ))}
         </div>
       </div>
       <ServiceDialog service={open} onClose={close} />
     </section>
-  )
-}
-
-const hoverBubbles = [
-  { left: '16%', size: 16, ms: 1000, delay: 0 },
-  { left: '38%', size: 26, ms: 1300, delay: 80 },
-  { left: '60%', size: 14, ms: 900, delay: 150 },
-  { left: '80%', size: 22, ms: 1200, delay: 40 },
-]
-
-function ServiceCard({ service, onOpen }: { service: Service; onOpen: (node: HTMLElement) => void }) {
-  return (
-    <Tilt className="glass h-full overflow-hidden rounded-[2rem]">
-      <button
-        type="button"
-        data-service={service.id}
-        onClick={(event) => onOpen(event.currentTarget)}
-        className="group flex h-full w-full flex-col p-2.5 text-left"
-      >
-        <span className="relative block h-56 overflow-hidden rounded-[1.6rem] bg-foam md:h-64">
-          {service.image ? (
-            <Photo
-              src={service.image}
-              alt=""
-              className="h-full w-full object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-110"
-            />
-          ) : null}
-          <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-sky/50 via-transparent to-white/20" />
-          <ServiceArt kind={service.visual} />
-          <span className="kicker absolute top-4 left-4">
-            {service.index} · {service.kicker}
-          </span>
-          {/* bolhas que sobem ao passar o cursor */}
-          {hoverBubbles.map((b) => (
-            <span
-              key={b.left}
-              className="pointer-events-none absolute -bottom-8"
-              style={{ left: b.left, width: b.size, height: b.size }}
-            >
-              <span
-                className="soap block h-full w-full opacity-0 ease-out group-hover:-translate-y-72 group-hover:opacity-100"
-                style={{ transitionProperty: 'transform, opacity', transitionDuration: `${b.ms}ms`, transitionDelay: `${b.delay}ms` }}
-              />
-            </span>
-          ))}
-        </span>
-        <span className="flex flex-1 flex-col px-4 pt-5 pb-4">
-          <span className="font-display text-2xl leading-tight font-black text-navy md:text-[1.7rem]">{service.title}</span>
-          <span className="mt-3 block text-sm leading-relaxed text-navy/75">{service.summary}</span>
-          <span className="mt-5 inline-flex items-center gap-2 font-display text-sm font-extrabold text-lagoon">
-            <span className="relative">
-              Ver detalhes
-              <span className="absolute -bottom-0.5 left-0 h-0.5 w-0 rounded-full bg-sky transition-all duration-500 group-hover:w-full" />
-            </span>
-            <span className="orb grid h-7 w-7 place-items-center text-white transition-transform duration-500 group-hover:translate-x-1.5 group-hover:-rotate-45">
-              <ArrowRight size={14} aria-hidden="true" />
-            </span>
-          </span>
-        </span>
-      </button>
-    </Tilt>
   )
 }
 
@@ -158,7 +113,7 @@ function ServiceDialog({ service, onClose }: { service: Service | null; onClose:
           <motion.button
             type="button"
             aria-label="Fechar detalhes do tratamento"
-            className="absolute inset-0 bg-sky/30 backdrop-blur-md"
+            className="absolute inset-0 bg-navy/35 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -169,84 +124,59 @@ function ServiceDialog({ service, onClose }: { service: Service | null; onClose:
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            className="glass relative flex max-h-[92svh] w-full max-w-2xl flex-col overflow-hidden rounded-[2rem] bg-white/80"
-            initial={{ opacity: 0, scale: 0.6, y: 80 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.85, y: 40 }}
-            transition={{ type: 'spring', stiffness: 240, damping: 22 }}
+            className="relative grid max-h-[92svh] w-full max-w-3xl grid-cols-1 overflow-hidden rounded-[2rem] bg-white shadow-2xl md:grid-cols-2"
+            initial={{ opacity: 0, y: 40, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 24, scale: 0.97 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 26 }}
           >
             <button
               type="button"
               onClick={onClose}
-              className="btn-ghost absolute top-4 right-4 z-10 grid h-11 w-11 place-items-center rounded-full text-navy transition-transform duration-300 hover:rotate-90"
+              className="absolute top-4 right-4 z-10 grid h-10 w-10 place-items-center rounded-full bg-white/90 text-navy shadow transition-transform duration-300 hover:rotate-90"
             >
               <span className="sr-only">Fechar</span>
               <X size={18} aria-hidden="true" />
             </button>
-            <div className="overflow-y-auto p-3 sm:p-4">
-              <div className="relative overflow-hidden rounded-[1.6rem] bg-foam">
-                {service.image ? (
-                  <motion.div initial={{ scale: 1.15 }} animate={{ scale: 1 }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}>
-                    <Photo src={service.image} alt={service.imageAlt} className="aspect-[16/9] w-full object-cover" />
-                  </motion.div>
-                ) : (
-                  <div className="relative aspect-[16/9]">
-                    <ServiceArt kind={service.visual} />
-                  </div>
-                )}
-                <span className="kicker absolute bottom-4 left-4">
-                  {service.index} · {service.kicker}
-                </span>
-              </div>
-              <div className="px-3 pt-6 pb-4 sm:px-5">
-                <motion.h3
-                  id={titleId}
-                  className="font-display text-3xl leading-tight font-black text-navy sm:text-4xl"
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.12 }}
-                >
-                  {service.title}
-                </motion.h3>
-                <motion.p
-                  className="mt-4 text-lg leading-relaxed text-navy/80"
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  {service.description}
-                </motion.p>
-                <ul className="mt-6 space-y-3">
-                  {service.notes.map((note, i) => (
-                    <motion.li
-                      key={note}
-                      className="flex gap-3 rounded-2xl bg-white/70 p-3 text-sm font-semibold text-navy/85"
-                      initial={{ opacity: 0, x: 24 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.28 + i * 0.08 }}
-                    >
-                      <span className="orb orb-green grid h-5 w-5 shrink-0 place-items-center text-white">
-                        <Check size={11} strokeWidth={3} aria-hidden="true" />
-                      </span>
-                      {note}
-                    </motion.li>
-                  ))}
-                </ul>
-                <p className="mt-6 text-xs leading-relaxed text-navy/60">
-                  A conversa a seguir é uma simulação. Nenhum dado é enviado e não há conexão com o WhatsApp.
-                </p>
-                <button
-                  type="button"
-                  className="btn btn-green mt-5"
-                  onClick={() => {
-                    onClose()
-                    navigate('/conversa', { state: { topic: service.title } })
-                  }}
-                >
-                  Solicitar informações
-                  <ArrowRight size={18} aria-hidden="true" />
-                </button>
-              </div>
+            <div className="relative h-52 overflow-hidden md:h-auto">
+              <motion.div className="h-full" initial={{ scale: 1.12 }} animate={{ scale: 1 }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}>
+                <Photo src={service.image} alt={service.imageAlt} className="h-full w-full object-cover" />
+              </motion.div>
+            </div>
+            <div className="overflow-y-auto p-7 sm:p-8">
+              <span className="text-xs font-extrabold tracking-[0.14em] text-sky uppercase">{service.kicker}</span>
+              <h3 id={titleId} className="mt-2 font-serif text-3xl font-medium text-navy">
+                {service.title}
+              </h3>
+              <p className="mt-3 leading-relaxed text-navy/70">{service.description}</p>
+              <ul className="mt-5 space-y-2.5">
+                {service.notes.map((note, i) => (
+                  <motion.li
+                    key={note}
+                    className="flex items-center gap-3 text-sm font-semibold text-navy/80"
+                    initial={{ opacity: 0, x: 16 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2 + i * 0.08 }}
+                  >
+                    <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-mint/15 text-mint">
+                      <Check size={13} strokeWidth={3} aria-hidden="true" />
+                    </span>
+                    {note}
+                  </motion.li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                className="btn btn-solid group mt-7"
+                onClick={() => {
+                  onClose()
+                  navigate('/conversa', { state: { topic: service.title } })
+                }}
+              >
+                Agendar avaliação
+                <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+              </button>
+              <p className="mt-4 text-xs text-navy/50">Abre uma conversa simulada. Nenhum dado é enviado.</p>
             </div>
           </motion.div>
         </motion.div>
